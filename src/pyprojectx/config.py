@@ -105,9 +105,7 @@ class Config:
                 raise Warning(f"Invalid alias {key}: '{tool}' is not defined in [tool.pyprojectx]")
             return tool, alias_cmd
         tool = alias_cmd.split()[0]
-        if self.is_tool(tool):
-            return tool, alias_cmd
-        return None, alias_cmd
+        return (tool, alias_cmd) if self.is_tool(tool) else (None, alias_cmd)
 
     def find_aliases(self, abbrev: str) -> List[str]:
         """
