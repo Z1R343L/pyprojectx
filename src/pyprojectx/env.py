@@ -94,9 +94,8 @@ class IsolatedVirtualEnv:
         cmd = [str(self.path), "--no-setuptools", "--no-wheel", "--activators", ""]
         logger.debug("Calling virtualenv.cli_run: %s", " ".join(cmd))
         result = virtualenv.cli_run(cmd, setup_logging=False)
-        scripts_dir = result.creator.script_dir
         self._executable = result.creator.exe
-        return scripts_dir
+        return result.creator.script_dir
 
     def _install_requirements(self, quiet=False):
         logger.info("Installing packages in isolated environment... (%s)", ", ".join(sorted(self._requirements)))
@@ -151,7 +150,7 @@ class IsolatedVirtualEnv:
         paths: Dict[str, None] = OrderedDict()
         paths[str(self.scripts_path)] = None
         if "PATH" in os.environ:
-            paths.update((i, None) for i in os.environ["PATH"].split(os.pathsep))
+            paths |= ((i, None) for i in os.environ["PATH"].split(os.pathsep))
         extra_environ = {"PATH": os.pathsep.join(paths)}
         env = os.environ.copy()
         env.update(extra_environ)
